@@ -3,8 +3,8 @@ package servers
 import (
 	"log"
 
-	"github.com/ihatecompvir/nex-go"
-	nexproto "github.com/ihatecompvir/nex-protocols-go"
+	"github.com/knvtva/nex-go"
+	nexproto "github.com/knvtva/nex-protocols-go"
 )
 
 func LaunchSession(err error, client *nex.Client, callID uint32, gatheringID uint32) {

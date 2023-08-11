@@ -19,7 +19,7 @@ import (
 	"rb3server/protocols/jsonproto/services/stats"
 	"rb3server/protocols/jsonproto/services/ticker"
 
-	"github.com/ihatecompvir/nex-go"
+	"github.com/knvtva/nex-go"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 

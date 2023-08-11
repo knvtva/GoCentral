@@ -7,8 +7,8 @@ import (
 	serialization "rb3server/serialization/gathering"
 	"time"
 
-	"github.com/ihatecompvir/nex-go"
-	nexproto "github.com/ihatecompvir/nex-protocols-go"
+	"github.com/knvtva/nex-go"
+	nexproto "github.com/knvtva/nex-protocols-go"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -40,12 +40,14 @@ func UpdateGathering(err error, client *nex.Client, callID uint32, gathering []b
 
 	// the client sends the entire gathering again, so update it in the DB
 
+	log.Println(g.HarmonixGathering.Public)
+
 	result, err := gatherings.UpdateOne(
 		nil,
 		bson.M{"gathering_id": gatheringID},
 		bson.D{
 			{"$set", bson.D{{"contents", gathering}}},
-			{"$set", bson.D{{"public", g.HarmonixGathering.Public}}},
+			{"$set", bson.D{{"public", 1}}},
 			{"$set", bson.D{{"last_updated", time.Now().Unix()}}},
 		},
 	)

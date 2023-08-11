@@ -7,8 +7,8 @@ import (
 
 	"time"
 
-	"github.com/ihatecompvir/nex-go"
-	nexproto "github.com/ihatecompvir/nex-protocols-go"
+	"github.com/knvtva/nex-go"
+	nexproto "github.com/knvtva/nex-protocols-go"
 	"go.mongodb.org/mongo-driver/bson"
 )
 

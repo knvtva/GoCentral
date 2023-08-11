@@ -6,8 +6,8 @@ import (
 	"rb3server/models"
 	"time"
 
-	"github.com/ihatecompvir/nex-go"
-	nexproto "github.com/ihatecompvir/nex-protocols-go"
+	"github.com/knvtva/nex-go"
+	nexproto "github.com/knvtva/nex-protocols-go"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -99,7 +99,7 @@ func CustomFind(err error, client *nex.Client, callID uint32, data []byte) {
 				SendErrorCode(SecureServer, client, nexproto.CustomMatchmakingProtocolID, callID, 0x00010001)
 				return
 			}
-			rmcResponseStream.WriteBufferString("HarmonixGathering")
+			rmcResponseStream.WriteString("HarmonixGathering")
 			rmcResponseStream.WriteU32LENext([]uint32{uint32(len(gathering.Contents) + 4)})
 			rmcResponseStream.WriteU32LENext([]uint32{uint32(len(gathering.Contents))})
 			rmcResponseStream.Grow(int64(len(gathering.Contents)))

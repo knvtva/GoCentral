@@ -3,7 +3,7 @@ package entities
 import (
 	"rb3server/protocols/jsonproto/marshaler"
 
-	"github.com/ihatecompvir/nex-go"
+	"github.com/knvtva/nex-go"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 

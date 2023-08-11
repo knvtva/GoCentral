@@ -3,8 +3,6 @@ module rb3server
 go 1.16
 
 require (
-	github.com/ihatecompvir/nex-go v0.0.0-20230222101216-ffea4371aae8
-	github.com/ihatecompvir/nex-protocols-go v0.0.0-20230222070009-430ead0499c7
 	github.com/jinzhu/copier v0.3.5
 	go.mongodb.org/mongo-driver v1.11.6
 )
@@ -13,6 +11,8 @@ require (
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/google/go-cmp v0.5.9 // indirect
 	github.com/klauspost/compress v1.16.5 // indirect
+	github.com/knvtva/nex-go v0.0.0-20230729103814-3a86316660ca // indirect
+	github.com/knvtva/nex-protocols-go v0.0.0-20230729113528-c9bc95afb7f8 // indirect
 	github.com/kr/pretty v0.3.1 // indirect
 	github.com/montanaflynn/stats v0.7.0 // indirect
 	github.com/stretchr/testify v1.8.2 // indirect

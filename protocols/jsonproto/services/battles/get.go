@@ -5,8 +5,8 @@ import (
 	"rb3server/models"
 	"rb3server/protocols/jsonproto/marshaler"
 
-	"github.com/ihatecompvir/nex-go"
 	"github.com/jinzhu/copier"
+	"github.com/knvtva/nex-go"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )

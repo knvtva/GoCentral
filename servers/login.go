@@ -10,8 +10,8 @@ import (
 	"rb3server/models"
 	"regexp"
 
-	"github.com/ihatecompvir/nex-go"
-	nexproto "github.com/ihatecompvir/nex-protocols-go"
+	"github.com/knvtva/nex-go"
+	nexproto "github.com/knvtva/nex-protocols-go"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -73,9 +73,13 @@ func Login(err error, client *nex.Client, callID uint32, username string) {
 	var rgx = regexp.MustCompile(`\(([^()]*)\)`)
 	res := rgx.FindStringSubmatch(username)
 
+	log.Println(res)
+	log.Println(username, " KEKW")
+
 	log.Println("nex.client stuff", client.Username)
 	log.Println("Server :", client.Server)
 	log.Println("Access Key : ", client.Server().AccessKey())
+	log.Println("Wii FC ", client.WiiFC)
 
 	// If there is no regex found, we are a PS3 client so get the correct stuff from the DB for the user
 	// PS3 usernames cannot contain parentheses so there is no chance of a PS3 client taking the wii path
@@ -84,11 +88,11 @@ func Login(err error, client *nex.Client, callID uint32, username string) {
 		log.Println("Xbox client connecting")
 		machineType = 0
 		client.Username = "XBOX"
-	} else if client.Server().AccessKey() == "bfa620c57c2d3bcdf4362a6fa6418e58" {
+	} else if client.Server().AccessKey() == "bf99796d6674ef63697f453296d7934c" {
 		log.Println("PS3 client connecting")
 		machineType = 1
 		client.Username = "PS3"
-	} else if client.Server().AccessKey() == "e97dc2ce9904698f84cae429a41b328a" {
+	} else if client.Server().AccessKey() == "45374d5e7e7bd280cad19ba98b1590a9" {
 		log.Println("Wii client connecting")
 		machineType = 2
 	} else {
@@ -122,13 +126,13 @@ func Login(err error, client *nex.Client, callID uint32, username string) {
 			}
 
 			Config.LastPID++
-
 		}
 		// client.Username = username
 	} else if machineType == 2 {
 		client.Username = "Master User"
+		log.Println(client.Username)
 		user.PID = 12345678 // master user PID is currently 12345678 - probably should go with 0 or something since it is a special account
-		client.WiiFC = res[1]
+		client.WiiFC = "3333333333333333333333333333"
 		log.Printf("Wii client detected, friend code %v\n", client.WiiFC)
 	}
 
@@ -141,6 +145,7 @@ func Login(err error, client *nex.Client, callID uint32, username string) {
 	// generate the ticket and pass the friend code as the pwd on Wii, or use static password on PS3
 	if client.Username == "Master User" {
 		encryptedTicket, kerberosKey = generateKerberosTicket(user.PID, uint32(serverPID), 16, client.WiiFC)
+		log.Println("Generate Ticket?")
 	} else {
 		encryptedTicket, kerberosKey = generateKerberosTicket(user.PID, uint32(serverPID), 16, "")
 	}

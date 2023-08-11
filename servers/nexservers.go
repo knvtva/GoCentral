@@ -7,8 +7,8 @@ import (
 	"rb3server/database"
 	"rb3server/models"
 
-	"github.com/ihatecompvir/nex-go"
-	nexproto "github.com/ihatecompvir/nex-protocols-go"
+	"github.com/knvtva/nex-go"
+	nexproto "github.com/knvtva/nex-protocols-go"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -18,6 +18,7 @@ var SecureServer *nex.Server
 var Config models.Config
 
 func OnConnection(packet *nex.PacketV0) {
+	log.Println("onConnection has been ran.")
 	packet.Sender().SetClientConnectionSignature(packet.Sender().ClientConnectionSignature())
 
 	// Decrypt payload
@@ -32,6 +33,7 @@ func OnConnection(packet *nex.PacketV0) {
 	stream.ReadBytesNext(0x20)
 	stream.ReadBytesNext(9)
 	requestData := stream.ReadBytesNext(0x1c)
+	log.Println(requestData, ":p")
 
 	// TODO: use random key from auth server
 	sessionKey := []byte{0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0xa, 0xb, 0xc, 0xd, 0xe, 0xf, 0x10}

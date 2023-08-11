@@ -5,8 +5,8 @@ import (
 	"crypto/md5"
 	"log"
 
-	"github.com/ihatecompvir/nex-go"
-	nexproto "github.com/ihatecompvir/nex-protocols-go"
+	"github.com/knvtva/nex-go"
+	nexproto "github.com/knvtva/nex-protocols-go"
 )
 
 func RequestTicket(err error, client *nex.Client, callID uint32, userPID uint32, serverPID uint32) {
