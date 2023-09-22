@@ -7,8 +7,8 @@ import (
 
 	"time"
 
-	"github.com/ihatecompvir/nex-go"
-	nexproto "github.com/ihatecompvir/nex-protocols-go"
+	"github.com/knvtva/nex-go"
+	nexproto "github.com/knvtva/nex-protocols-go"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -54,7 +54,9 @@ func RegisterGathering(err error, client *nex.Client, callID uint32, gathering [
 		{Key: "creator", Value: client.Username},
 		{Key: "last_updated", Value: time.Now().Unix()},
 		{Key: "state", Value: 0},
-		{Key: "public", Value: 0},
+		{Key: "public", Value: 1},
+		{Key: "host", Value: 0},
+		{Key: "room_code", Value: ""},
 	})
 
 	if err != nil {
