@@ -79,6 +79,21 @@ func CustomFind(err error, client *nex.Client, callID uint32, data []byte) {
 
 		if hosting {
 			log.Println("%v is hosting a private lobby.", client.Username)
+
+			_, err := gatheringCollection.UpdateOne(
+				context.TODO(),
+				bson.M{"creator": client.Username},
+				bson.M{
+					"$set": bson.M{
+						"public": 1,
+						"state": 0,
+					},
+				},
+			)
+			if err != nil {
+				log.Printf("Error updating gathering: %v", err)
+			}
+			
 		}else if roomCode != "" {
 			// Check for another gathering with the same room code and host equal to 1
 			cur, err := gatheringCollection.Aggregate(nil, []bson.M{
