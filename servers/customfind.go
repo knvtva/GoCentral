@@ -78,8 +78,11 @@ func CustomFind(err error, client *nex.Client, callID uint32, data []byte) {
 		roomCode := gatheringResult["room_code"].(string)
 
 		if hosting {
+			rmcResponseStream := nex.NewStream()
+			rmcResponseStream.Grow(50)
 			log.Println("%v is hosting a private lobby.", client.Username)
-
+	
+			// Update the gathering to set it as public and in state 0
 			_, err := gatheringCollection.UpdateOne(
 				context.TODO(),
 				bson.M{"creator": client.Username},
@@ -93,7 +96,56 @@ func CustomFind(err error, client *nex.Client, callID uint32, data []byte) {
 			if err != nil {
 				log.Printf("Error updating gathering: %v", err)
 			}
-			
+	
+			// Find gatherings with host 0 and a matching room code
+			filter := bson.M{
+				"host":      0,
+				"room_code": roomCode,
+			}
+			ctx := context.TODO()
+			cur, err := gatheringCollection.Find(ctx, filter)
+			if err != nil {
+				log.Printf("Error finding gatherings: %v", err)
+			}
+			defer cur.Close(ctx)
+	
+			var gatheringsWithHost0 []models.Gathering
+			for cur.Next(ctx) {
+				var gathering models.Gathering
+				if err := cur.Decode(&gathering); err != nil {
+					log.Printf("Error decoding gathering: %v", err)
+				}
+				gatheringsWithHost0 = append(gatheringsWithHost0, gathering)
+			}
+	
+			// Check if there are any gatherings found
+			if len(gatheringsWithHost0) > 0 {
+				log.Println("Found a client.", client.Username)
+			} else {
+				log.Println("No active gatherings are trying to join.", client.Username)
+				rmcResponseStream.WriteU32LENext([]uint32{0})
+			}
+
+			rmcResponseBody := rmcResponseStream.Bytes()
+
+			rmcResponse := nex.NewRMCResponse(nexproto.CustomMatchmakingProtocolID, callID)
+			rmcResponse.SetSuccess(nexproto.RegisterGathering, rmcResponseBody)
+		
+			rmcResponseBytes := rmcResponse.Bytes()
+		
+			responsePacket, _ := nex.NewPacketV0(client, nil)
+		
+			responsePacket.SetVersion(0)
+			responsePacket.SetSource(0x31)
+			responsePacket.SetDestination(0x3F)
+			responsePacket.SetType(nex.DataPacket)
+		
+			responsePacket.SetPayload(rmcResponseBytes)
+		
+			responsePacket.AddFlag(nex.FlagNeedsAck)
+			responsePacket.AddFlag(nex.FlagReliable)
+		
+			SecureServer.Send(responsePacket)
 		}else if roomCode != "" {
 			// Check for another gathering with the same room code and host equal to 1
 			cur, err := gatheringCollection.Aggregate(nil, []bson.M{
@@ -171,7 +223,7 @@ func CustomFind(err error, client *nex.Client, callID uint32, data []byte) {
 		}else {
 			cur, err := gatheringCollection.Aggregate(nil, []bson.M{
 				bson.M{"$match": bson.D{
-					// dont find our own gathering
+					// don't find our own gathering
 					{
 						Key:   "creator",
 						Value: bson.D{{Key: "$ne", Value: client.Username}},
@@ -181,12 +233,12 @@ func CustomFind(err error, client *nex.Client, callID uint32, data []byte) {
 						Key:   "last_updated",
 						Value: bson.D{{Key: "$gt", Value: (time.Now().Unix()) - (15 * 60)}},
 					},
-					// dont look for gatherings in the "in song" state
+					// don't look for gatherings in the "in song" state
 					{
 						Key:   "state",
 						Value: bson.D{{Key: "$ne", Value: 2}},
 					},
-					// dont look for gatherings in the "on song select" state
+					// don't look for gatherings in the "on song select" state
 					{
 						Key:   "state",
 						Value: bson.D{{Key: "$ne", Value: 6}},
@@ -196,9 +248,15 @@ func CustomFind(err error, client *nex.Client, callID uint32, data []byte) {
 						Key:   "public",
 						Value: bson.D{{Key: "$eq", Value: 1}},
 					},
+					// filter out gatherings with non-empty room codes
+					{
+						Key:   "room_code",
+						Value: bson.D{{Key: "$eq", Value: ""}},
+					},
 				}},
 				bson.M{"$sample": bson.M{"size": 10}},
 			})
+			
 			if err != nil {
 				log.Printf("Could not get a random gathering: %s\n", err)
 				SendErrorCode(SecureServer, client, nexproto.CustomMatchmakingProtocolID, callID, 0x00010001)
@@ -235,6 +293,7 @@ func CustomFind(err error, client *nex.Client, callID uint32, data []byte) {
 						SendErrorCode(SecureServer, client, nexproto.CustomMatchmakingProtocolID, callID, 0x00010001)
 						return
 					}
+					log.Println(user.PID)
 					rmcResponseStream.WriteBufferString("HarmonixGathering")
 					rmcResponseStream.WriteU32LENext([]uint32{uint32(len(gathering.Contents) + 4)})
 					rmcResponseStream.WriteU32LENext([]uint32{uint32(len(gathering.Contents))})
