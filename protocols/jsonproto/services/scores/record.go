@@ -8,7 +8,7 @@ import (
 	"strings"
 	"sort"
 
-	"github.com/ihatecompvir/nex-go"
+	"github.com/knvtva/nex-go"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -709,6 +709,9 @@ func (service ScoreRecordService) Handle(data string, database *mongo.Database, 
 	//var results []ScoreRecordResponse
 	var rank int
 	var Bandrank int
+	var beatenRankUser string
+	var beatenBandRankUser string
+
 
 	for i := 0; i < len(playerData); i++ {
 		var playerScore models.Score // Assuming you have a Score model
@@ -721,7 +724,6 @@ func (service ScoreRecordService) Handle(data string, database *mongo.Database, 
 
 		if err != nil {
 			log.Printf("Error while retrieving player score: %v\n", err)
-			// Handle the error appropriately, e.g., return an error or continue
 		}
 
 		if score >= playerScore.Score {
@@ -732,102 +734,206 @@ func (service ScoreRecordService) Handle(data string, database *mongo.Database, 
 			}
 		}
 
+		playerFilter = bson.M{"song_id": songID, "pid": pid, "role_id": role_id}
+		err = database.Collection("scores").FindOne(context.TODO(), playerFilter).Decode(&playerScore)
+
+		if err != nil {
+			log.Printf("Error while retrieving player score: %v\n", err)
+		}
+
 		newScore := playerScore.Score
 
-		// Use BandPosition if role_id is 10, otherwise use Position
+		// Use BandPosition if role_id is 10, otherwise use Position (Variables)
 		if role_id == 10 {
-			var allScores []int
-
+			var bandScores []int
+		
 			playerFilter = bson.M{"song_id": songID, "role_id": role_id}
-			log.Println("Role ID:", role_id)
 			cursor, err := database.Collection("scores").Find(context.TODO(), playerFilter)
 			if err != nil {
 				log.Printf("Error while retrieving scores: %v\n", err)
-				// Handle the error appropriately, e.g., return an error or continue
 			}
 			defer cursor.Close(context.TODO())
-	
+		
 			for cursor.Next(context.TODO()) {
 				var playerScore models.Score
 				if err := cursor.Decode(&playerScore); err != nil {
 					log.Printf("Error decoding score: %v\n", err)
 					return "", err
 				}
-				allScores = append(allScores, playerScore.Score)
+				bandScores = append(bandScores, playerScore.Score)
 			}
-	
-			allScores = append(allScores, newScore)
-			sort.Sort(sort.Reverse(sort.IntSlice(allScores)))
-	
+		
+			sort.Sort(sort.Reverse(sort.IntSlice(bandScores)))
+		
+			filteredBandScores := []int{}
+			for _, score := range bandScores {
+				if score != 0 {
+					filteredBandScores = append(filteredBandScores, score)
+				}
+			}
+		
 			Bandrank = 0
-			for i, score := range allScores {
+			for i, score := range filteredBandScores {
 				if newScore == score {
 					Bandrank = i + 1
 					break
 				}
 			}
-		} else {
-			var allScores []int
 
+			lastBandValue := filteredBandScores[len(filteredBandScores)-1]
+
+			if lastBandValue == playerScore.Score {
+				beatenRankUser = ""
+			} else {
+				var BeatenBandScore int
+
+				BeatenBandScore = filteredBandScores[rank+2]
+
+				playerFilter = bson.M{"song_id": songID, "role_id": role_id, "score": BeatenBandScore}
+				cursor, err := database.Collection("scores").Find(context.TODO(), playerFilter)
+				if err != nil {
+					log.Printf("Error while retrieving BeatenBandScore: %v\n", err)
+					return "", err
+				}
+				defer cursor.Close(context.TODO())
+
+				var playerScore models.Score
+				if cursor.Next(context.TODO()) {
+					if err := cursor.Decode(&playerScore); err != nil {
+						log.Printf("Error decoding score: %v\n", err)
+						return "", err
+					}
+				}
+
+				var users models.User
+				playerFilter = bson.M{"pid": playerScore.OwnerPID}
+				cursor, err = database.Collection("users").Find(context.TODO(), playerFilter)
+				if err != nil {
+					log.Printf("Error while retrieving user data: %v\n", err)
+					return "", err
+				}
+				defer cursor.Close(context.TODO())
+
+				if cursor.Next(context.TODO()) {
+					if err := cursor.Decode(&users); err != nil {
+						log.Printf("Error decoding user data: %v\n", err)
+						return "", err
+					}
+				}
+				beatenBandRankUser = users.Username
+			}
+
+		} else {
+			var soloScores []int
+		
 			playerFilter = bson.M{"song_id": songID, "role_id": role_id}
-			log.Println("Role ID:", role_id)
 			cursor, err := database.Collection("scores").Find(context.TODO(), playerFilter)
 			if err != nil {
 				log.Printf("Error while retrieving scores: %v\n", err)
 			}
 			defer cursor.Close(context.TODO())
-	
+		
 			for cursor.Next(context.TODO()) {
 				var playerScore models.Score
 				if err := cursor.Decode(&playerScore); err != nil {
 					log.Printf("Error decoding score: %v\n", err)
 					return "", err
 				}
-				allScores = append(allScores, playerScore.Score)
+				soloScores = append(soloScores, playerScore.Score)
 			}
-	
-			allScores = append(allScores, newScore)
-			sort.Sort(sort.Reverse(sort.IntSlice(allScores)))
-	
+		
+			sort.Sort(sort.Reverse(sort.IntSlice(soloScores)))
+		
+			filteredSoloScores := []int{}
+			for _, score := range soloScores {
+				if score != 0 {
+					filteredSoloScores = append(filteredSoloScores, score)
+				}
+			}
+		
 			rank = 0
-			for i, score := range allScores {
+			for i, score := range filteredSoloScores {
 				if newScore == score {
-					rank = i + 1 // Adding 1 because ranks are usually 1-based
+					rank = i + 1
 					break
 				}
 			}
+
+			lastSoloValue := filteredSoloScores[len(filteredSoloScores)-1]
+
+			if lastSoloValue == playerScore.Score {
+				beatenRankUser = ""
+			} else {
+				var BeatenUserScore int
+
+				BeatenUserScore = filteredSoloScores[rank]
+
+				playerFilter = bson.M{"song_id": songID, "role_id": role_id, "score": BeatenUserScore}
+				cursor, err := database.Collection("scores").Find(context.TODO(), playerFilter)
+				if err != nil {
+					log.Printf("Error while retrieving BeatenUserScore: %v\n", err)
+					return "", err
+				}
+				defer cursor.Close(context.TODO())
+
+				var playerScore models.Score
+				if cursor.Next(context.TODO()) {
+					if err := cursor.Decode(&playerScore); err != nil {
+						log.Printf("Error decoding score: %v\n", err)
+						return "", err
+					}
+				}
+
+				var users models.User
+				playerFilter = bson.M{"pid": playerScore.OwnerPID}
+				cursor, err = database.Collection("users").Find(context.TODO(), playerFilter)
+				if err != nil {
+					log.Printf("Error while retrieving user data: %v\n", err)
+					return "", err
+				}
+				defer cursor.Close(context.TODO())
+
+				if cursor.Next(context.TODO()) {
+					if err := cursor.Decode(&users); err != nil {
+						log.Printf("Error decoding user data: %v\n", err)
+						return "", err
+					}
+				}
+				beatenRankUser = users.Username
+			}
 		}
-
 	}
 
-	// Your other code here
+	var BeatenRankUserRes string
+	var BeatenBandRankUserRes string
 
-	// Example output (change it as needed)
-	res := []ScoreRecordResponse{		
-	{501, 0, rank, 1, "b", "j", 0},
-	{501, 1, Bandrank, 1, "b", "j", 0},
-	{502, 0, rank, 1, "b", "j", 1},
-	{502, 1, Bandrank, 1, "b", "j", 1},
-	{503, 0, rank, 1, "b", "j", 2},
-	{503, 1, Bandrank, 1, "b", "j", 2},
-	{503, 0, rank, 1, "b", "j", 2},
-	{503, 1, Bandrank, 1, "b", "j", 2},
-	{503, 0, rank, 1, "b", "j", 3},
-	{503, 1, Bandrank, 1, "b", "j", 3},
-	{503, 0, rank, 1, "b", "j", 3},
-	{503, 1, Bandrank, 1, "b", "j", 3},
-}
-	log.Println(res)
-
-	var boi int = 1
-	if len(playerData) == 2 {
-		boi = 1
+	if beatenRankUser != "" {
+		BeatenRankUserRes = "g|" + beatenRankUser + "|" + beatenRankUser
 	} else {
-		boi = 0
+		BeatenRankUserRes = "j"
 	}
-	log.Println(boi)
-	log.Println(playerData)
 
-	log.Println(marshaler.MarshalResponse(service.Path(), res))
+	if beatenBandRankUser != "" {
+		BeatenBandRankUserRes = "g|" + beatenBandRankUser + "|" + beatenBandRankUser
+	} else {
+		BeatenBandRankUserRes = "j"
+	}
+
+
+	res := []ScoreRecordResponse{		
+	{501, 0, rank, 1, "b", BeatenRankUserRes, 0},
+	{501, 1, Bandrank, 1, "b", BeatenBandRankUserRes, 0},
+	{502, 0, rank, 1, "b", BeatenRankUserRes, 1},
+	{502, 1, Bandrank, 1, "b", BeatenBandRankUserRes, 1},
+	{503, 0, rank, 1, "b", BeatenRankUserRes, 2},
+	{503, 1, Bandrank, 1, "b", BeatenBandRankUserRes, 2},
+	{503, 0, rank, 1, "b", BeatenRankUserRes, 2},
+	{503, 1, Bandrank, 1, "b", BeatenBandRankUserRes, 2},
+	{503, 0, rank, 1, "b", BeatenRankUserRes, 3},
+	{503, 1, Bandrank, 1, "b", BeatenBandRankUserRes, 3},
+	{503, 0, rank, 1, "b", BeatenRankUserRes, 3},
+	{503, 1, Bandrank, 1, "b", BeatenBandRankUserRes, 3},
+	}
+
 	return marshaler.MarshalResponse(service.Path(), res)
 }
