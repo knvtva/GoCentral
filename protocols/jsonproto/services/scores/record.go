@@ -787,6 +787,7 @@ func (service ScoreRecordService) Handle(data string, database *mongo.Database, 
 			} else {
 				var BeatenBandScore int
 
+				// This is what causes it to break or crash (Need a better way of doing it)
 				BeatenBandScore = filteredBandScores[rank+2]
 
 				playerFilter = bson.M{"song_id": songID, "role_id": role_id, "score": BeatenBandScore}
