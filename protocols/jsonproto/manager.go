@@ -78,6 +78,8 @@ func (mgr *ServicesManager) registerAll() {
 	mgr.register(leaderboard.AccMaxrankGetService{})
 	mgr.register(leaderboard.AccRankRangeGetService{})
 	mgr.register(leaderboard.RankRangeGetService{})
+	mgr.register(leaderboard.BattlePlayerGetService{})
+	mgr.register(leaderboard.BattleMaxrankGetService{})
 
 	mgr.register(songlists.GetSonglistsService{})
 
