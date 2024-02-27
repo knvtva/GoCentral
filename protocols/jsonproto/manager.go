@@ -60,6 +60,7 @@ func (mgr *ServicesManager) registerAll() {
 	mgr.register(accountlink.AccountLinkService{})
 
 	mgr.register(scores.ScoreRecordService{})
+	mgr.register(scores.BattleRecordService{})
 
 	mgr.register(ticker.TickerInfoService{})
 
@@ -82,6 +83,7 @@ func (mgr *ServicesManager) registerAll() {
 
 	mgr.register(battles.GetBattlesService{})
 	mgr.register(battles.LimitCheckService{})
+	mgr.register(battles.BattleCreateService{})
 
 	mgr.register(stats.StatsPadService{})
 
