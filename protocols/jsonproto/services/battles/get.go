@@ -22,29 +22,18 @@ type GetBattlesRequest struct {
 }
 
 type GetBattlesResponse struct {
-	ID          int    `json:"id"`
-	PID         int    `json:"pid"`
-	Title       string `json:"title"`
-	Desc        string `json:"desc"`
-	Type        int    `json:"type"`
-	Owner       string `json:"owner"`
-	OwnerGUID   string `json:"owner_guid"`
-	GUID        string `json:"guid"`
-	ArtURL      string `json:"art_url"`
-	SongID000   int    `json:"s_id000"`
-	SongName000 string `json:"s_name000"`
-	SongID001   int    `json:"s_id001"`
-	SongName001 string `json:"s_name001"`
-	SongID002   int    `json:"s_id002"`
-	SongName002 string `json:"s_name002"`
-	SongID003   int    `json:"s_id003"`
-	SongName003 string `json:"s_name003"`
-	SongID004   int    `json:"s_id004"`
-	SongName004 string `json:"s_name004"`
-	SongID005   int    `json:"s_id005"`
-	SongName005 string `json:"s_name005"`
-	SongID006   int    `json:"s_id006"`
-	SongName006 string `json:"s_name006"`
+	Instrument   int    `json:"id"`
+	PID          int    `json:"pid"`
+	Title        string `json:"title"`
+	Desc         string `json:"desc"`
+	Type         int    `json:"type"`
+	Owner        string `json:"owner"`
+	OwnerGUID    string `json:"owner_guid"`
+	GUID         string `json:"guid"`
+	ArtURL       string `json:"battle_art"`
+	TimeEndVal   int    `json:"time_left"`
+	SongID000    int    `json:"s_id000"`
+	SongName000  string `json:"s_name000"`
 }
 
 type GetBattlesService struct {
@@ -67,9 +56,11 @@ func (service GetBattlesService) Handle(data string, database *mongo.Database, c
 		return "", err
 	}
 
-	setlistCollection := database.Collection("battles")
+	battleCollection := database.Collection("battles")
 
-	setlistCursor, err := setlistCollection.Find(nil, bson.D{})
+	battleCursor, err := battleCollection.Find(nil, bson.D{})
+
+	log.Println(battleCursor)
 
 	if err != nil {
 		log.Printf("Error getting setlist for battle: %s", err)
@@ -77,15 +68,15 @@ func (service GetBattlesService) Handle(data string, database *mongo.Database, c
 
 	res := []GetBattlesResponse{}
 
-	for setlistCursor.Next(nil) {
-		var setlist GetBattlesResponse
-		var setlistToCopy models.Setlist
+	for battleCursor.Next(nil) {
+		var battle GetBattlesResponse
+		var battleToCopy models.Battles
 
-		setlistCursor.Decode(&setlistToCopy)
+		battleCursor.Decode(&battleToCopy)
 
-		copier.Copy(&setlist, &setlistToCopy)
+		copier.Copy(&battle, &battleToCopy)
 
-		res = append(res, setlist)
+		res = append(res, battle)
 	}
 
 	if len(res) == 0 {
