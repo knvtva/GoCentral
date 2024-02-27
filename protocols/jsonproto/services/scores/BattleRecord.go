@@ -64,6 +64,7 @@ func (service BattleRecordService) Handle(data string, database *mongo.Database,
 		return "", err
 	}
 
-  // This is mock data. TODO: Calculate the Instarank properly with the battle leaderboards.
-	return marshaler.MarshalResponse(service.Path(), []ScoreRecordResponse{{2, 0, 8, 1, "d|2466|9", "j", 2}, {2, 1, 41, 1, "d|427|42", "j", 2}})
+    // This is mock data. TODO: Calculate the Instarank properly with the battle leaderboards.
+	return marshaler.MarshalResponse(service.Path(), []BattleRecordResponse{{2, 0, 8, 1, "d|2466|9", "j", 2}, {2, 1, 41, 1, "d|427|42", "j", 2}})
+
 }
