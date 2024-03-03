@@ -11,6 +11,7 @@ import (
 	"rb3server/protocols/jsonproto/services/entities"
 	"rb3server/protocols/jsonproto/services/entities/band"
 	"rb3server/protocols/jsonproto/services/entities/character"
+	"rb3server/protocols/jsonproto/services/friends"
 	leaderboard "rb3server/protocols/jsonproto/services/leaderboards"
 	"rb3server/protocols/jsonproto/services/performance"
 	"rb3server/protocols/jsonproto/services/scores"
@@ -84,6 +85,8 @@ func (mgr *ServicesManager) registerAll() {
 	mgr.register(battles.LimitCheckService{})
 
 	mgr.register(stats.StatsPadService{})
+
+	mgr.register(friends.FriendRecordService{})
 
 }
 
