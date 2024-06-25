@@ -333,7 +333,7 @@ func (service ScoreRecordService) Handle(data string, database *mongo.Database, 
 			{Key: "role_id", Value: request.RoleID000},
 			{Key: "diffid", Value: request.DiffID000},
 			{Key: "boi", Value: 0},
-			{Key: "boi_id", Value: request.BoiID}
+			{Key: "boi_id", Value: request.BoiID},
 			{Key: "instrument_mask", Value: request.BandMask},
 		})
 		playerData = append(playerData, bson.D{
@@ -344,7 +344,7 @@ func (service ScoreRecordService) Handle(data string, database *mongo.Database, 
 			{Key: "role_id", Value: request.RoleID001},
 			{Key: "diffid", Value: request.DiffID001},
 			{Key: "boi", Value: 1},
-			{Key: "boi_id", Value: request.BoiID}
+			{Key: "boi_id", Value: request.BoiID},
 			{Key: "instrument_mask", Value: request.BandMask},
 		})
 	case ScoreRecordRequestTwoPlayer:
@@ -368,7 +368,7 @@ func (service ScoreRecordService) Handle(data string, database *mongo.Database, 
 			{Key: "role_id", Value: request.RoleID000},
 			{Key: "diffid", Value: request.DiffID000},
 			{Key: "boi", Value: 0},
-			{Key: "boi_id", Value: request.BoiID}
+			{Key: "boi_id", Value: request.BoiID},
 			{Key: "instrument_mask", Value: request.BandMask},
 		})
 		playerData = append(playerData, bson.D{
@@ -379,7 +379,7 @@ func (service ScoreRecordService) Handle(data string, database *mongo.Database, 
 			{Key: "role_id", Value: request.RoleID001},
 			{Key: "diffid", Value: request.DiffID001},
 			{Key: "boi", Value: 1},
-			{Key: "boi_id", Value: request.BoiID}
+			{Key: "boi_id", Value: request.BoiID},
 			{Key: "instrument_mask", Value: request.BandMask},
 		})
 		playerData = append(playerData, bson.D{
@@ -390,7 +390,7 @@ func (service ScoreRecordService) Handle(data string, database *mongo.Database, 
 			{Key: "role_id", Value: request.RoleID002},
 			{Key: "diffid", Value: request.DiffID002},
 			{Key: "boi", Value: 1},
-			{Key: "boi_id", Value: request.BoiID}
+			{Key: "boi_id", Value: request.BoiID},
 			{Key: "instrument_mask", Value: instrumentMap[request.RoleID002]},
 		})
 		playerData = append(playerData, bson.D{
@@ -401,7 +401,7 @@ func (service ScoreRecordService) Handle(data string, database *mongo.Database, 
 			{Key: "role_id", Value: request.RoleID003},
 			{Key: "diffid", Value: request.DiffID003},
 			{Key: "boi", Value: 1},
-			{Key: "boi_id", Value: request.BoiID}
+			{Key: "boi_id", Value: request.BoiID},
 			{Key: "instrument_mask", Value: instrumentMap[request.RoleID003]},
 		})
 	case ScoreRecordRequestThreePlayer:
@@ -426,7 +426,7 @@ func (service ScoreRecordService) Handle(data string, database *mongo.Database, 
 			{Key: "role_id", Value: request.RoleID000},
 			{Key: "diffid", Value: request.DiffID000},
 			{Key: "boi", Value: 0},
-			{Key: "boi_id", Value: request.BoiID}
+			{Key: "boi_id", Value: request.BoiID},
 			{Key: "instrument_mask", Value: request.BandMask},
 		})
 		playerData = append(playerData, bson.D{
@@ -437,7 +437,7 @@ func (service ScoreRecordService) Handle(data string, database *mongo.Database, 
 			{Key: "role_id", Value: request.RoleID001},
 			{Key: "diffid", Value: request.DiffID001},
 			{Key: "boi", Value: 1},
-			{Key: "boi_id", Value: request.BoiID}
+			{Key: "boi_id", Value: request.BoiID},
 			{Key: "instrument_mask", Value: request.BandMask},
 		})
 		playerData = append(playerData, bson.D{
@@ -448,7 +448,7 @@ func (service ScoreRecordService) Handle(data string, database *mongo.Database, 
 			{Key: "role_id", Value: request.RoleID002},
 			{Key: "diffid", Value: request.DiffID002},
 			{Key: "boi", Value: 1},
-			{Key: "boi_id", Value: request.BoiID}
+			{Key: "boi_id", Value: request.BoiID},
 			{Key: "instrument_mask", Value: request.BandMask},
 		})
 		// Individual Scores Are Applied Here
@@ -460,7 +460,7 @@ func (service ScoreRecordService) Handle(data string, database *mongo.Database, 
 			{Key: "role_id", Value: request.RoleID003},
 			{Key: "diffid", Value: request.DiffID003},
 			{Key: "boi", Value: 1},
-			{Key: "boi_id", Value: request.BoiID}
+			{Key: "boi_id", Value: request.BoiID},
 			{Key: "instrument_mask", Value: instrumentMap[request.RoleID003]},
 		})
 		playerData = append(playerData, bson.D{
@@ -471,7 +471,7 @@ func (service ScoreRecordService) Handle(data string, database *mongo.Database, 
 			{Key: "role_id", Value: request.RoleID004},
 			{Key: "diffid", Value: request.DiffID004},
 			{Key: "boi", Value: 1},
-			{Key: "boi_id", Value: request.BoiID}
+			{Key: "boi_id", Value: request.BoiID},
 			{Key: "instrument_mask", Value: instrumentMap[request.RoleID004]},
 		})
 		playerData = append(playerData, bson.D{
@@ -482,7 +482,7 @@ func (service ScoreRecordService) Handle(data string, database *mongo.Database, 
 			{Key: "role_id", Value: request.RoleID005},
 			{Key: "diffid", Value: request.DiffID005},
 			{Key: "boi", Value: 1},
-			{Key: "boi_id", Value: request.BoiID}
+			{Key: "boi_id", Value: request.BoiID},
 			{Key: "instrument_mask", Value: instrumentMap[request.RoleID005]},
 		})
 	case ScoreRecordRequestFourPlayer:
@@ -507,7 +507,7 @@ func (service ScoreRecordService) Handle(data string, database *mongo.Database, 
 			{Key: "role_id", Value: request.RoleID000},
 			{Key: "diffid", Value: request.DiffID000},
 			{Key: "boi", Value: 0},
-			{Key: "boi_id", Value: request.BoiID}
+			{Key: "boi_id", Value: request.BoiID},
 			{Key: "instrument_mask", Value: request.BandMask},
 		})
 		playerData = append(playerData, bson.D{
@@ -518,7 +518,7 @@ func (service ScoreRecordService) Handle(data string, database *mongo.Database, 
 			{Key: "role_id", Value: request.RoleID001},
 			{Key: "diffid", Value: request.DiffID001},
 			{Key: "boi", Value: 1},
-			{Key: "boi_id", Value: request.BoiID}
+			{Key: "boi_id", Value: request.BoiID},
 			{Key: "instrument_mask", Value: request.BandMask},
 		})
 		playerData = append(playerData, bson.D{
@@ -529,7 +529,7 @@ func (service ScoreRecordService) Handle(data string, database *mongo.Database, 
 			{Key: "role_id", Value: request.RoleID002},
 			{Key: "diffid", Value: request.DiffID002},
 			{Key: "boi", Value: 1},
-			{Key: "boi_id", Value: request.BoiID}
+			{Key: "boi_id", Value: request.BoiID},
 			{Key: "instrument_mask", Value: request.BandMask},
 		})
 		playerData = append(playerData, bson.D{
@@ -540,7 +540,7 @@ func (service ScoreRecordService) Handle(data string, database *mongo.Database, 
 			{Key: "role_id", Value: request.RoleID003},
 			{Key: "diffid", Value: request.DiffID003},
 			{Key: "boi", Value: 1},
-			{Key: "boi_id", Value: request.BoiID}
+			{Key: "boi_id", Value: request.BoiID},
 			{Key: "instrument_mask", Value: request.BandMask},
 		})
 
@@ -553,7 +553,7 @@ func (service ScoreRecordService) Handle(data string, database *mongo.Database, 
 			{Key: "role_id", Value: request.RoleID004},
 			{Key: "diffid", Value: request.DiffID004},
 			{Key: "boi", Value: 1},
-			{Key: "boi_id", Value: request.BoiID}
+			{Key: "boi_id", Value: request.BoiID},
 			{Key: "instrument_mask", Value: instrumentMap[request.RoleID004]},
 		})
 		playerData = append(playerData, bson.D{
@@ -564,7 +564,7 @@ func (service ScoreRecordService) Handle(data string, database *mongo.Database, 
 			{Key: "role_id", Value: request.RoleID005},
 			{Key: "diffid", Value: request.DiffID005},
 			{Key: "boi", Value: 1},
-			{Key: "boi_id", Value: request.BoiID}
+			{Key: "boi_id", Value: request.BoiID},
 			{Key: "instrument_mask", Value: instrumentMap[request.RoleID004]},
 		})
 		playerData = append(playerData, bson.D{
@@ -575,7 +575,7 @@ func (service ScoreRecordService) Handle(data string, database *mongo.Database, 
 			{Key: "role_id", Value: request.RoleID006},
 			{Key: "diffid", Value: request.DiffID006},
 			{Key: "boi", Value: 1},
-			{Key: "boi_id", Value: request.BoiID}
+			{Key: "boi_id", Value: request.BoiID},
 			{Key: "instrument_mask", Value: instrumentMap[request.RoleID006]},
 		})
 		playerData = append(playerData, bson.D{
@@ -586,7 +586,7 @@ func (service ScoreRecordService) Handle(data string, database *mongo.Database, 
 			{Key: "role_id", Value: request.RoleID007},
 			{Key: "diffid", Value: request.DiffID007},
 			{Key: "boi", Value: 1},
-			{Key: "boi_id", Value: request.BoiID}
+			{Key: "boi_id", Value: request.BoiID},
 			{Key: "instrument_mask", Value: instrumentMap[request.RoleID007]},
 		})
 	}
